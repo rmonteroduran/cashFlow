@@ -9,7 +9,10 @@ import {
   Settings,
   Shield,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Users,
+  LineChart,
+  ArrowRightLeft
 } from "lucide-react"
 
 export default function Sidebar({ 
@@ -28,7 +31,10 @@ export default function Sidebar({
   const pathname = usePathname()
 
   const baseNavItems = [
-    { name: "Dashboard", href: "/", icon: LayoutDashboard }
+    { name: "Dashboard", href: "/", icon: LayoutDashboard },
+    { name: "Clientes", href: "/clientes", icon: Users },
+    { name: "Proyecciones", href: "/proyecciones", icon: LineChart },
+    { name: "Conciliación", href: "/conciliacion", icon: ArrowRightLeft }
   ]
 
   let navItems: any[] = []

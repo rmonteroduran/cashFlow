@@ -42,3 +42,80 @@ model AllowedDomain {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 }
+
+model Client {
+  id              String   @id @default(cuid())
+  name            String
+  taxRateIIBB     Float    @default(0)
+  taxRateGanancias Float    @default(0)
+  taxRateIVA      Float    @default(0)
+  taxRateSUSS     Float    @default(0)
+  projections     CashFlowProjection[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Vendor {
+  id              String   @id @default(cuid())
+  name            String
+  projections     CashFlowProjection[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Category {
+  id              String   @id @default(cuid())
+  name            String
+  type            CategoryType
+  transactions    Transaction[]
+  projections     CashFlowProjection[]
+}
+
+enum CategoryType {
+  INCOME
+  EXPENSE
+}
+
+model BankAccount {
+  id              String   @id @default(cuid())
+  name            String
+  currency        Currency @default(ARS)
+  transactions    Transaction[]
+}
+
+enum Currency {
+  ARS
+  USD
+}
+
+model Transaction {
+  id              String   @id @default(cuid())
+  date            DateTime
+  description     String
+  amount          Float
+  bankAccountId   String
+  bankAccount     BankAccount @relation(fields: [bankAccountId], references: [id])
+  categoryId      String?
+  category        Category?   @relation(fields: [categoryId], references: [id])
+  isReconciled    Boolean     @default(false)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model CashFlowProjection {
+  id              String   @id @default(cuid())
+  date            DateTime
+  description     String
+  amount          Float
+  netAmount       Float
+  type            CategoryType
+  clientId        String?
+  client          Client?     @relation(fields: [clientId], references: [id])
+  vendorId        String?
+  vendor          Vendor?     @relation(fields: [vendorId], references: [id])
+  categoryId      String?
+  category        Category?   @relation(fields: [categoryId], references: [id])
+  isReconciled    Boolean     @default(false)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
