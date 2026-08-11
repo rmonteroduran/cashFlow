@@ -1,0 +1,102 @@
+# Manual de Usuario - recruIT
+
+Bienvenido al manual de usuario de **recruIT**, la plataforma integral de gestión de reclutamiento y selección. Este documento detalla la estructura de roles, el funcionamiento de los módulos y las políticas de seguridad implementadas en el sistema.
+
+---
+
+## 1. Arquitectura de Roles y Permisos
+
+El sistema cuenta con un modelo de seguridad basado en roles (RBAC) diseñado para proteger la información operativa y delegar la administración técnica.
+
+### Roles de Administración
+> [!IMPORTANT]
+> El sistema requiere de manera obligatoria que exista al menos un usuario activo con rol `ADMIN` o `ADMIN_MANAGER`. El sistema prevendrá cualquier acción (eliminación o degradación) que deje al sistema sin administradores.
+
+- **Admin Manager (Full Access) (`ADMIN_MANAGER`)**
+  - **Perfil:** Superusuario o Director de Tecnología.
+  - **Accesos:** Tiene control absoluto sobre toda la plataforma. Puede ver tanto la sección operativa (candidatos, vacantes, dashboard) como la sección técnica (seguridad, configuración visual).
+  - **Uso ideal:** Directores que necesitan auditar el trabajo operativo pero que también configuran la herramienta.
+
+- **Admin Técnico (`ADMIN`)**
+  - **Perfil:** Personal de TI o Soporte Técnico.
+  - **Accesos:** Acceso exclusivo a los módulos de **Seguridad** y **Configuración Visual**.
+  - **Restricciones:** No tiene acceso al Dashboard, clientes, candidatos, ni vacantes. Si intenta acceder a una ruta operativa (ej. `/clients`), el sistema lo redirigirá automáticamente a la sección de Seguridad.
+
+### Roles Operativos
+- **Manager (`MANAGER`)**
+  - **Perfil:** Líder de Reclutamiento / Gerente de RRHH.
+  - **Accesos:** Acceso total a la sección operativa (Dashboard completo, Clientes, Vacantes, Candidatos y Pipeline). No tiene acceso a configuración técnica ni gestión de roles.
+
+- **Recruiter (`RECRUITER`)**
+  - **Perfil:** Reclutador o Analista de Selección.
+  - **Accesos:** Gestión diaria de reclutamiento. Puede crear y mover candidatos en el pipeline, gestionar vacantes y ver clientes. 
+  
+- **Client Manager (`CLIENT_MANAGER`)**
+  - **Perfil:** Cliente externo o Hiring Manager de la empresa cliente.
+  - **Accesos:** (Módulo Portal de Cliente). Solo puede visualizar el estado de las vacantes que le pertenecen y los candidatos presentados.
+
+---
+
+## 2. Autenticación y Seguridad
+
+> [!WARNING]
+> La aplicación está protegida globalmente. Es imposible acceder a cualquier URL (incluso el Dashboard base) sin una sesión activa.
+
+- **Inicio de Sesión:** El acceso principal se realiza a través de Microsoft (Azure AD). Para entornos de desarrollo o contingencia, existe un login manual por credenciales.
+- **Validación de Dominio:** Los usuarios nuevos solo pueden ingresar si su dominio de correo electrónico (`@empresa.com`) ha sido previamente autorizado en la sección de Seguridad.
+- **Primer Usuario:** Si la base de datos está vacía, el primer usuario que inicie sesión mediante Microsoft se convertirá automáticamente en `ADMIN`, habilitando a su vez el dominio de su correo para futuros registros.
+
+---
+
+## 3. Módulos Operativos
+
+Estos módulos están disponibles para `ADMIN_MANAGER`, `MANAGER` y `RECRUITER`.
+
+### 📊 Dashboard
+Pantalla de inicio para perfiles operativos. Muestra indicadores clave de rendimiento (KPIs):
+- Vacantes activas y Total de candidatos.
+- Gráficos del embudo de selección (Pipeline).
+- Feed de actividad reciente mostrando los movimientos del equipo.
+
+### 🏢 Clientes
+Gestión del CRM (Customer Relationship Management) de la consultora.
+- Creación y edición de empresas cliente.
+- Datos de contacto y detalles impositivos (CUIT).
+- Vinculación con vacantes (una vacante siempre pertenece a un cliente).
+
+### 💼 Vacantes (Job Openings)
+Centro de requerimientos de personal.
+- Creación de búsquedas especificando rol, cliente, modalidad (remoto/híbrido) y salario.
+- Seguimiento de estados (`OPEN`, `CLOSED`, `ON_HOLD`).
+
+### 👥 Candidatos
+Base de datos de talento.
+- Perfiles detallados con información de contacto, seniority, y enlace a LinkedIn.
+- Historial de eventos y comentarios: Cada acción realizada sobre el candidato queda registrada con fecha, hora y el usuario que la realizó.
+
+### 📋 Pipeline (Tablero Kanban)
+Herramienta ágil para el seguimiento del proceso de selección.
+- Visualización de candidatos en columnas según su etapa: *Aplicados, Revisión, Entrevista, Oferta, Contratado, Rechazado*.
+- Interfaz de "arrastrar y soltar" (Drag & Drop) para mover candidatos entre las etapas.
+
+---
+
+## 4. Módulos de Administración (Configuración)
+
+Disponibles únicamente para `ADMIN` y `ADMIN_MANAGER`.
+
+### 🎨 Configuración Visual (Branding)
+Permite personalizar la apariencia de la plataforma (White-labeling).
+- Carga de logotipo corporativo.
+- Personalización de los colores primario y secundario. (Impacta inmediatamente en la interfaz, botones y menú lateral de todos los usuarios).
+
+### 🛡️ Seguridad y Accesos
+Centro de control técnico de la plataforma.
+- **Administración de Usuarios:** 
+  - Listado de usuarios activos en la plataforma.
+  - Edición de roles y revocación de accesos (deshabilitar cuentas).
+  - *Recordatorio:* No se puede dejar el sistema sin administradores.
+- **Dominios Permitidos (Whitelisting):** 
+  - Gestión de los dominios de correo electrónico (`@midominio.com`) autorizados para iniciar sesión a través del botón de Microsoft.
+- **Configuración de IA:** 
+  - Panel para ingresar las claves (API Keys) de inteligencia artificial que alimentan las funcionalidades automáticas del sistema.

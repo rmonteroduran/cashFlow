@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model CompanyBranding {
+  id             String   @id @default(cuid())
+  logoUrl        String?
+  primaryColor   String   @default("#1e3a8a")
+  secondaryColor String   @default("#3b82f6")
+  accentColor    String   @default("#f59e0b")
+  aiEnabled      Boolean  @default(false)
+  azureOpenAiEndpoint String?
+  azureOpenAiApiKey String?
+  azureOpenAiDeploymentName String?
+  updatedAt      DateTime @updatedAt
+}
+
+model UserAccess {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  role          Role     @default(ANALYST)
+  isActive      Boolean  @default(true)
+  authProviders String[] @default(["AZURE_AD"])
+  createdAt     DateTime @default(now())
+}
+
+enum Role {
+  ADMIN
+  ADMIN_MANAGER
+  ANALYST
+  MANAGER
+}
+
+model AllowedDomain {
+  id        String   @id @default(cuid())
+  domain    String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
