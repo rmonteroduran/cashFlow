@@ -183,7 +183,7 @@ export default function BrandingForm({ initialData }: { initialData: BrandingDat
                     W
                   </div>
                 )}
-                <span className="font-semibold text-gray-800">Cashflow App</span>
+                <span className="font-semibold text-gray-800">cashFlow App</span>
               </div>
               
               <div className="flex gap-4">

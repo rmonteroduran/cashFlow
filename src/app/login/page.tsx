@@ -27,7 +27,7 @@ export default async function LoginPage() {
             </div>
           )}
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
-            Bienvenido a cash<span className="text-[var(--color-primary)]">flow</span>
+            Bienvenido a cash<span className="text-[var(--color-primary)]">Flow</span>
           </h1>
           <p className="text-sm text-gray-500 mt-2">Inicia sesión para gestionar el flujo de caja</p>
         </div>

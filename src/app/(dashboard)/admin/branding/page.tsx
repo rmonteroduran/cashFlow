@@ -12,7 +12,7 @@ export default async function BrandingPage() {
         <header className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Configuración</h1>
           <p className="text-gray-500">
-            Personaliza la apariencia de cashflow para que coincida con la identidad corporativa de tu empresa.
+            Personaliza la apariencia de cashFlow para que coincida con la identidad corporativa de tu empresa.
             Los cambios se aplicarán inmediatamente en todas las interfaces de los usuarios
           </p>
         </header>

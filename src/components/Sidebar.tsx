@@ -64,7 +64,7 @@ export default function Sidebar({
           )}
           {!isCollapsed && (
             <span className="font-bold text-gray-900 text-lg tracking-tight whitespace-nowrap overflow-hidden">
-              cash<span className="text-[var(--color-primary)]">flow</span>
+              cash<span className="text-[var(--color-primary)]">Flow</span>
             </span>
           )}
         </div>

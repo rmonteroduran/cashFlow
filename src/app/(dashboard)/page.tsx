@@ -22,7 +22,7 @@ export default async function DashboardPage() {
         <header className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Dashboard de Inicio</h1>
-            <p className="text-gray-500 mt-1">Bienvenido a Cashflow</p>
+            <p className="text-gray-500 mt-1">Bienvenido a cashFlow</p>
           </div>
         </header>
 

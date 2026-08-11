@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 
   return {
-    title: "cashflow",
+    title: "cashFlow",
     description: "Sistema de Gestión de Reclutamiento",
     icons: branding?.logoUrl ? {
       icon: branding.logoUrl,
