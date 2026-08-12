@@ -108,6 +108,7 @@ model CashFlowProjection {
   description     String
   amount          Float
   netAmount       Float
+  currency        Currency @default(ARS)
   type            CategoryType
   clientId        String?
   client          Client?     @relation(fields: [clientId], references: [id])

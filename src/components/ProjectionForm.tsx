@@ -11,6 +11,7 @@ export default function ProjectionForm({ clients }: { clients: any[] }) {
     date: new Date().toISOString().split('T')[0],
     description: "",
     amount: "",
+    currency: "ARS" as "ARS" | "USD",
     type: "INCOME" as "INCOME" | "EXPENSE",
     clientId: "",
   })
@@ -27,6 +28,7 @@ export default function ProjectionForm({ clients }: { clients: any[] }) {
         date: localDate,
         description: formData.description,
         amount: parseFloat(formData.amount),
+        currency: formData.currency,
         type: formData.type,
         clientId: formData.clientId || undefined,
       })
@@ -79,16 +81,27 @@ export default function ProjectionForm({ clients }: { clients: any[] }) {
 
       <div className="grid grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Monto Bruto ($)</label>
-          <input
-            type="number"
-            required
-            step="0.01"
-            min="0"
-            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] outline-none"
-            value={formData.amount}
-            onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-          />
+          <label className="block text-sm font-medium text-gray-700 mb-1">Monto Bruto y Moneda</label>
+          <div className="flex gap-2">
+            <select
+              className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] outline-none bg-gray-50"
+              value={formData.currency}
+              onChange={(e) => setFormData({ ...formData, currency: e.target.value as "ARS" | "USD" })}
+            >
+              <option value="ARS">ARS</option>
+              <option value="USD">USD</option>
+            </select>
+            <input
+              type="number"
+              required
+              step="0.01"
+              min="0"
+              placeholder="0.00"
+              className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] outline-none"
+              value={formData.amount}
+              onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+            />
+          </div>
         </div>
 
         <div>
