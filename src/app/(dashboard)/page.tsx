@@ -30,8 +30,9 @@ export default async function DashboardPage(props: { searchParams: Promise<{ mon
   const startOfMonth = new Date(selectedYear, selectedMonth, 1)
   const endOfMonth = new Date(selectedYear, selectedMonth + 1, 0, 23, 59, 59, 999)
 
-  const [transactions, currentMonthProjections] = await Promise.all([
-    prisma.transaction.findMany({ include: { bankAccount: true } }),
+  const [bankAccounts, investments, currentMonthProjections] = await Promise.all([
+    prisma.bankAccount.findMany({ include: { transactions: true } }),
+    prisma.investment.findMany(),
     prisma.cashFlowProjection.findMany({
       where: {
         date: { gte: startOfMonth, lte: endOfMonth }
@@ -39,21 +40,24 @@ export default async function DashboardPage(props: { searchParams: Promise<{ mon
     })
   ])
 
-  // Saldo total actual (separando inversiones y monedas)
+  // Saldo total actual (Cuentas Bancarias)
   let realBalanceARS = 0;
   let realBalanceUSD = 0;
   let investedARS = 0;
   let investedUSD = 0;
 
-  transactions.forEach(t => {
-    const isInvestment = t.bankAccount.name.toLowerCase().includes('inversion') || t.bankAccount.name.toLowerCase().includes('inversión');
-    if (t.bankAccount.currency === 'ARS') {
-      if (isInvestment) investedARS += t.amount;
-      else realBalanceARS += t.amount;
-    } else if (t.bankAccount.currency === 'USD') {
-      if (isInvestment) investedUSD += t.amount;
-      else realBalanceUSD += t.amount;
-    }
+  bankAccounts.forEach(acc => {
+    let accBalance = acc.initialBalance;
+    acc.transactions.forEach(t => accBalance += t.amount);
+
+    if (acc.currency === 'ARS') realBalanceARS += accBalance;
+    else if (acc.currency === 'USD') realBalanceUSD += accBalance;
+  });
+
+  // Total invertido (Inversiones independientes)
+  investments.forEach(inv => {
+    if (inv.currency === 'ARS') investedARS += inv.amount;
+    else if (inv.currency === 'USD') investedUSD += inv.amount;
   });
 
   // Ingresos Proyectados Mes Actual

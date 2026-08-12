@@ -1,5 +1,7 @@
 import { getClients } from "@/app/(dashboard)/proyecciones/actions"
 import Link from "next/link"
+import { Edit2 } from "lucide-react"
+import { DeleteClientButton } from "@/components/DeleteClientButton"
 
 export const dynamic = 'force-dynamic'
 
@@ -27,17 +29,19 @@ export default async function ClientesPage() {
               <thead className="bg-gray-50 text-gray-600 font-medium border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-4">Nombre</th>
+                  <th className="px-6 py-4">CUIT</th>
                   <th className="px-6 py-4 text-right">Alícuota IIBB</th>
                   <th className="px-6 py-4 text-right">Ganancias</th>
                   <th className="px-6 py-4 text-right">IVA</th>
                   <th className="px-6 py-4 text-right">SUSS</th>
                   <th className="px-6 py-4 text-right">Total Retención</th>
+                  <th className="px-6 py-4 text-center">Acciones</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {clients.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                    <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
                       No hay clientes registrados.
                     </td>
                   </tr>
@@ -47,11 +51,20 @@ export default async function ClientesPage() {
                     return (
                       <tr key={client.id} className="hover:bg-gray-50/50 cursor-pointer transition-colors">
                         <td className="px-6 py-4 text-gray-900 font-medium">{client.name}</td>
+                        <td className="px-6 py-4 text-gray-500 text-sm">{client.cuit || '-'}</td>
                         <td className="px-6 py-4 text-right">{client.taxRateIIBB.toFixed(2)}%</td>
                         <td className="px-6 py-4 text-right">{client.taxRateGanancias.toFixed(2)}%</td>
                         <td className="px-6 py-4 text-right">{client.taxRateIVA.toFixed(2)}%</td>
                         <td className="px-6 py-4 text-right">{client.taxRateSUSS.toFixed(2)}%</td>
                         <td className="px-6 py-4 text-right text-gray-900 font-semibold">{totalRetenciones}%</td>
+                        <td className="px-6 py-4 text-center">
+                          <div className="flex items-center justify-center gap-2">
+                            <Link href={`/clientes/${client.id}/editar`} className="inline-flex p-2 text-gray-400 hover:text-[var(--color-primary)] hover:bg-blue-50 rounded-lg transition-colors">
+                              <Edit2 className="w-4 h-4" />
+                            </Link>
+                            <DeleteClientButton clientId={client.id} clientName={client.name} />
+                          </div>
+                        </td>
                       </tr>
                     )
                   })

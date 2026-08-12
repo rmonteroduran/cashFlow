@@ -2,18 +2,24 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { createProjection } from "@/app/(dashboard)/proyecciones/actions"
+import { createProjection, updateProjection } from "@/app/(dashboard)/proyecciones/actions"
 
-export default function ProjectionForm({ clients }: { clients: any[] }) {
+export default function ProjectionForm({ clients, projection }: { clients: any[], projection?: any }) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  
+  // Format the date to YYYY-MM-DD for the date input
+  const initialDate = projection?.date 
+    ? new Date(projection.date).toISOString().split('T')[0]
+    : new Date().toISOString().split('T')[0];
+
   const [formData, setFormData] = useState({
-    date: new Date().toISOString().split('T')[0],
-    description: "",
-    amount: "",
-    currency: "ARS" as "ARS" | "USD",
-    type: "INCOME" as "INCOME" | "EXPENSE",
-    clientId: "",
+    date: initialDate,
+    description: projection?.description || "",
+    amount: projection?.amount?.toString() || "",
+    currency: projection?.currency || "ARS" as "ARS" | "USD",
+    type: projection?.type || "INCOME" as "INCOME" | "EXPENSE",
+    clientId: projection?.clientId || "",
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,14 +30,20 @@ export default function ProjectionForm({ clients }: { clients: any[] }) {
       const [year, month, day] = formData.date.split("-").map(Number)
       const localDate = new Date(year, month - 1, day, 12, 0, 0)
 
-      await createProjection({
+      const data = {
         date: localDate,
         description: formData.description,
         amount: parseFloat(formData.amount),
         currency: formData.currency,
         type: formData.type,
         clientId: formData.clientId || undefined,
-      })
+      };
+
+      if (projection) {
+        await updateProjection(projection.id, data);
+      } else {
+        await createProjection(data);
+      }
       router.push("/proyecciones")
     } catch (error) {
       console.error(error)
@@ -136,7 +148,7 @@ export default function ProjectionForm({ clients }: { clients: any[] }) {
           disabled={isSubmitting}
           className="px-6 py-2 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] font-medium rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
         >
-          {isSubmitting ? "Guardando..." : "Guardar Proyección"}
+          {isSubmitting ? "Guardando..." : (projection ? "Guardar Cambios" : "Guardar Proyección")}
         </button>
       </div>
     </form>

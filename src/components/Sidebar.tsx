@@ -12,7 +12,8 @@ import {
   ChevronRight,
   Users,
   LineChart,
-  ArrowRightLeft
+  ArrowRightLeft,
+  Landmark
 } from "lucide-react"
 
 export default function Sidebar({ 
@@ -32,6 +33,7 @@ export default function Sidebar({
 
   const baseNavItems = [
     { name: "Dashboard", href: "/", icon: LayoutDashboard },
+    { name: "Cuentas e Inversiones", href: "/cuentas", icon: Landmark },
     { name: "Clientes", href: "/clientes", icon: Users },
     { name: "Proyecciones", href: "/proyecciones", icon: LineChart },
     { name: "Conciliación", href: "/conciliacion", icon: ArrowRightLeft }

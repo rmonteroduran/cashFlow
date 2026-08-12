@@ -1,5 +1,7 @@
 import { getProjections, getClients } from "./actions"
 import Link from "next/link"
+import { Edit2 } from "lucide-react"
+import { DeleteProjectionButton } from "@/components/DeleteProjectionButton"
 
 export const dynamic = 'force-dynamic'
 
@@ -34,6 +36,7 @@ export default async function ProyeccionesPage() {
                   <th className="px-6 py-4 text-right">Monto Bruto</th>
                   <th className="px-6 py-4 text-right">Monto Neto</th>
                   <th className="px-6 py-4 text-center">Estado</th>
+                  <th className="px-6 py-4 text-center">Acciones</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -74,6 +77,20 @@ export default async function ProyeccionesPage() {
                         ) : (
                           <span className="text-amber-500 font-medium text-xs">Pendiente</span>
                         )}
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          {proj.isReconciled ? (
+                            <span className="inline-flex p-2 text-gray-300 rounded-lg cursor-not-allowed" title="No se puede editar una proyección conciliada">
+                              <Edit2 className="w-4 h-4" />
+                            </span>
+                          ) : (
+                            <Link href={`/proyecciones/${proj.id}/editar`} className="inline-flex p-2 text-gray-400 hover:text-[var(--color-primary)] hover:bg-blue-50 rounded-lg transition-colors" title="Editar Proyección">
+                              <Edit2 className="w-4 h-4" />
+                            </Link>
+                          )}
+                          <DeleteProjectionButton projectionId={proj.id} disabled={proj.isReconciled} />
+                        </div>
                       </td>
                     </tr>
                   ))

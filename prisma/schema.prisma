@@ -46,6 +46,7 @@ model AllowedDomain {
 model Client {
   id              String   @id @default(cuid())
   name            String
+  cuit            String   @unique
   taxRateIIBB     Float    @default(0)
   taxRateGanancias Float    @default(0)
   taxRateIVA      Float    @default(0)
@@ -80,6 +81,7 @@ model BankAccount {
   id              String   @id @default(cuid())
   name            String
   currency        Currency @default(ARS)
+  initialBalance  Float    @default(0)
   transactions    Transaction[]
 }
 
@@ -119,4 +121,17 @@ model CashFlowProjection {
   isReconciled    Boolean     @default(false)
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
+}
+
+model Investment {
+  id              String   @id @default(cuid())
+  name            String
+  entity          String
+  instrumentType  String
+  termDays        Int?
+  returnRate      Float?
+  amount          Float
+  currency        Currency @default(ARS)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }

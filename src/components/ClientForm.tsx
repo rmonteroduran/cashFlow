@@ -2,33 +2,44 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { createClient } from "@/app/(dashboard)/proyecciones/actions"
+import { createClient, updateClient } from "@/app/(dashboard)/proyecciones/actions"
 
-export default function ClientForm() {
+export default function ClientForm({ client }: { client?: any }) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [formData, setFormData] = useState({
-    name: "",
-    taxRateIIBB: "0",
-    taxRateGanancias: "0",
-    taxRateIVA: "0",
-    taxRateSUSS: "0",
+    name: client?.name || "",
+    cuit: client?.cuit || "",
+    taxRateIIBB: client?.taxRateIIBB?.toString() || "0",
+    taxRateGanancias: client?.taxRateGanancias?.toString() || "0",
+    taxRateIVA: client?.taxRateIVA?.toString() || "0",
+    taxRateSUSS: client?.taxRateSUSS?.toString() || "0",
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setErrorMsg(null)
     try {
-      await createClient({
+      const data = {
         name: formData.name,
+        cuit: formData.cuit.trim(),
         taxRateIIBB: parseFloat(formData.taxRateIIBB),
         taxRateGanancias: parseFloat(formData.taxRateGanancias),
         taxRateIVA: parseFloat(formData.taxRateIVA),
         taxRateSUSS: parseFloat(formData.taxRateSUSS),
-      })
+      };
+
+      if (client) {
+        await updateClient(client.id, data);
+      } else {
+        await createClient(data);
+      }
       router.push("/clientes")
-    } catch (error) {
+    } catch (error: any) {
       console.error(error)
+      setErrorMsg(error.message)
     } finally {
       setIsSubmitting(false)
     }
@@ -36,16 +47,37 @@ export default function ClientForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Nombre del Cliente / Razón Social</label>
-        <input
-          type="text"
-          required
-          placeholder="Ej: Consultora Tech S.A."
-          className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] outline-none"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-        />
+      {errorMsg && (
+        <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm border border-red-200">
+          {errorMsg}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Nombre del Cliente / Razón Social</label>
+          <input
+            type="text"
+            required
+            placeholder="Ej: Consultora Tech S.A."
+            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] outline-none"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">CUIT</label>
+          <input
+            type="text"
+            required
+            pattern="\d*"
+            title="Debe ingresar solo números"
+            placeholder="Ej: 30123456789"
+            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] outline-none"
+            value={formData.cuit}
+            onChange={(e) => setFormData({ ...formData, cuit: e.target.value })}
+          />
+        </div>
       </div>
 
       <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl mb-6">
@@ -120,7 +152,7 @@ export default function ClientForm() {
           disabled={isSubmitting}
           className="px-6 py-2 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] font-medium rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
         >
-          {isSubmitting ? "Guardando..." : "Guardar Cliente"}
+          {isSubmitting ? "Guardando..." : (client ? "Guardar Cambios" : "Guardar Cliente")}
         </button>
       </div>
     </form>
